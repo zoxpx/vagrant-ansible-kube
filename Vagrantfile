@@ -32,7 +32,7 @@ Vagrant.configure("2") do |config|
 
    vm_nodes.each do |host,typ|
 
-      mybox, _, mycntrl, myport, extra_disks = vm_conf["#{typ}"]
+      mybox, mynic, mycntrl, myport, extra_disks = vm_conf["#{typ}"]
 
       config.vm.define "#{host}" do |node|
 
@@ -43,6 +43,7 @@ Vagrant.configure("2") do |config|
          node.vm.provider "virtualbox" do |v|
             v.gui = false
             v.memory = 4096
+            v.linked_clone = true
 
             # Extra customizations
             v.customize 'pre-boot', ["modifyvm", :id, "--cpus", "2"]
@@ -86,6 +87,13 @@ Vagrant.configure("2") do |config|
 
                echo ':: Fixing /etc/hosts ...'
                sed -i -e 's/.*#{host}.*/# \\0  # VAGRANT/' /etc/hosts
+
+               if [ -f /etc/sysconfig/network ]; then
+                  echo ':: Fixing GATEWAYDEV  (CentOS) ...'
+                  echo 'GATEWAYDEV=#{mynic}' >> /etc/sysconfig/network
+                  systemctl restart network
+               fi
+               echo ":: IPs $(hostname -I)"
             SHELL
          end
       end

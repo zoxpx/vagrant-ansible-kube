@@ -1,5 +1,5 @@
 ---
-# NOTE: this assumes main network interface is 'eth1'
+# NOTE: this task assumes main network interface is 'eth1'
 - name: Update /etc/hosts
   blockinfile:
     path: /etc/hosts
@@ -7,16 +7,3 @@
       {% for item in ansible_play_hosts %}
       {{ hostvars[item].ansible_eth1.ipv4.address }}	{{ item }}
       {% endfor %}
-
-- name: Update /etc/sysconfig/network (RedHat)
-  blockinfile:
-    path: /etc/sysconfig/network
-    block: |
-      GATEWAYDEV=eth1
-  when: ansible_os_family == 'RedHat'
-
-- name: Restart network (RedHat)
-  systemd:
-    name: network
-    state: restarted
-  when: ansible_os_family == 'RedHat'
