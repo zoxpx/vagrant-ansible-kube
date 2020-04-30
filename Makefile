@@ -14,6 +14,9 @@ install: playbook.yaml .hosts
 test:	.hosts
 	ansible -i .hosts --ssh-common-args "-F .ssh_conf" all -m shell -a '/sbin/ip -4 route get 8.8.8.8'
 
+test-vars:	.hosts
+	ansible -i .hosts --ssh-common-args "-F .ssh_conf" all -m setup
+
 distclean:
 	vagrant destroy -f
 	rm -fr .ssh_conf .hosts .vagrant

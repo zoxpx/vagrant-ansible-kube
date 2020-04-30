@@ -11,6 +11,7 @@
       - util-linux
       - apt-transport-https
       - ca-certificates
+      - software-properties-common
       - linux-headers-{{ ansible_kernel }}
     state: latest
   when: ansible_os_family == 'Debian'
@@ -30,7 +31,10 @@
       - libselinux-python
       - epel-release
       - e2fsprogs
+      - yum-utils
       - yum-plugin-versionlock
       - ca-certificates
+      - device-mapper-persistent-data
+      - lvm2
     state: latest
   when: ansible_os_family == 'RedHat'

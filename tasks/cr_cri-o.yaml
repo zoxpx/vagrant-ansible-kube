@@ -28,10 +28,10 @@
 - name: Add repository (CentOS)
   yum_repository:
     name: devel_kubic_libcontainers_stable
-    description: Stable Releases of Upstream github.com/containers packages (CentOS_7)
-    baseurl: http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/{{ crio_version }}/CentOS_7/
+    description: Stable Releases of Upstream github.com/containers packages (CentOS_{{ ansible_distribution_major_version }})
+    baseurl: http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/{{ crio_version }}/CentOS_{{ ansible_distribution_major_version }}/
     gpgcheck: yes
-    gpgkey: http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/{{ crio_version }}/CentOS_7/repodata/repomd.xml.key
+    gpgkey: http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/{{ crio_version }}/CentOS_{{ ansible_distribution_major_version }}/repodata/repomd.xml.key
     enabled: yes
   when: cri_runtime == 'cri-o' and ansible_os_family == 'RedHat'
 

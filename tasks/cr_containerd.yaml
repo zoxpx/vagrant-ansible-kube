@@ -1,23 +1,42 @@
 ---
 - debug:
     msg:
-    - "System {{ inventory_hostname }} has uuid {{ ansible_product_uuid }} // {{ cri_runtime }}"
+    - "Installing {{ cri_runtime }} on {{ inventory_hostname }} with uuid {{ ansible_product_uuid }}"
 
-- name: Get Containerd
-  unarchive:
-    src: "https://storage.googleapis.com/cri-containerd-release/cri-containerd-{{ containerd_version }}.linux-amd64.tar.gz"
-    dest: "/"
-    remote_src: yes
-  when: cri_runtime == 'containerd'
+- name: Add Docker GPG key (Ubuntu)
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+  when: ansible_os_family == 'Debian'
 
-- name: Make Containerd dirs
-  file:
-    path: '{{ item }}'
-    state: directory
-  with_items:
-    - '{{ cni_bin_dir }}'
-    - '{{ cni_conf_dir }}'
-    - '/etc/containerd/'
+- name: Add Docker repository (Ubuntu)
+  apt_repository:
+    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+    state: present
+    filename: "docker-ce"
+  when: cri_runtime == 'containerd' and ansible_os_family == 'Debian'
+
+# ---------------------------------------------
+
+- name: Add Docker repository (CentOS)
+  yum_repository:
+    name: docker-ce
+    description: Docker CE Stable - $basearch
+    baseurl: https://download.docker.com/linux/centos/{{ ansible_distribution_major_version }}/$basearch/stable
+    gpgcheck: yes
+    enabled: yes
+    repo_gpgcheck: yes
+    gpgkey:
+      - https://download.docker.com/linux/centos/gpg
+  when: cri_runtime == 'containerd' and ansible_os_family == 'RedHat'
+
+# ---------------------------------------------
+
+- name: Install Containerd
+  package:
+    name: 'containerd.io'
+    state: present
+    update_cache: yes
   when: cri_runtime == 'containerd'
 
 - name: Start Containerd
@@ -27,4 +46,24 @@
     daemon_reload: yes
     state: started
     enabled: yes
+  when: cri_runtime == 'containerd'
+
+- name: Install Containerd
+  package:
+    name: 'containerd.io'
+    state: present
+    update_cache: yes
+  when: cri_runtime == 'containerd'
+
+- name: Make Containerd directory
+  file:
+    path: '/etc/containerd'
+    state: directory
+  when: cri_runtime == 'containerd'
+
+- name: Dump default Containerd config
+  shell: containerd config default > /etc/containerd/config.toml
+  args:
+    chdir: /etc/containerd
+    creates: /etc/containerd/config.toml
   when: cri_runtime == 'containerd'
