@@ -1,0 +1,17 @@
+---
+- name: Install native Docker
+  package:
+    name:  "{{ docker_pkg }}"
+    state: present
+  when: cri_runtime == 'docker'
+
+- name: Install Docker (latest)
+  shell: curl -fsSL https://get.docker.com | sh -s
+  when: cri_runtime == 'docker_latest'
+
+- name: Enable docker
+  systemd:
+    name: docker
+    state: started
+    enabled: yes
+  when: cri_runtime == 'docker' or cri_runtime == 'docker_latest'

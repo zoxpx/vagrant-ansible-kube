@@ -1,0 +1,9 @@
+---
+- name: Update all packages
+  package:
+    name: "*"
+    state: latest
+
+- name: Reboot
+  command: /sbin/shutdown -r +1
+  ignore_errors: true

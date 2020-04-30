@@ -1,0 +1,15 @@
+---
+- name: Clean container-runtimes
+  package:
+    name:
+      - docker
+      - docker-ce
+      - docker-ce-cli
+      - docker-engine
+      - docker.io
+      - runc
+      - containerd
+      - containerd.io
+      - cri-o
+    state: absent
+  ignore_errors: true

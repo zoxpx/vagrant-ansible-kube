@@ -1,0 +1,10 @@
+---
+- name: Disable firewall (Ubuntu)
+  command: /usr/sbin/ufw disable
+  ignore_errors: true
+  when: ansible_os_family == 'Debian'
+
+- name: Disable firewall (CentOS)
+  systemd: name=firewalld enabled=no state=stopped
+  ignore_errors: true
+  when: ansible_os_family == 'RedHat'

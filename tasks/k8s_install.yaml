@@ -1,0 +1,77 @@
+---
+- name: Add gpg key (Ubuntu)
+  apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    state: present
+  when: ansible_os_family == 'Debian'
+
+- name: Add kubernetes repository (Ubuntu)
+  apt_repository:
+#   repo: "deb http://apt.kubernetes.io/ kubernetes-{{ ansible_distribution_release }} main"
+    repo: "deb http://apt.kubernetes.io/ kubernetes-xenial main"
+    state: present
+    filename: "kubernetes"
+  when: ansible_os_family == 'Debian'
+
+- name: Install Kubernetes (Ubuntu)
+  apt:
+    name:
+      - "kubelet={{ k8s_version }}-00"
+      - "kubeadm={{ k8s_version }}-00"
+      - "kubectl={{ k8s_version }}-00"
+    state: present
+    update_cache: yes
+  when: ansible_os_family == 'Debian'
+
+# ---------------------------------------------
+
+- name: Add Kubernetes repository (CentOS)
+  yum_repository:
+    name: kubernetes
+    description: Kubernetes repository
+    baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+    gpgcheck: yes
+    enabled: yes
+    repo_gpgcheck: yes
+    gpgkey: 
+      - https://packages.cloud.google.com/yum/doc/yum-key.gpg 
+      - https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+  when: ansible_os_family == 'RedHat'
+
+- name: Disable SELinux (CentOS)
+  selinux:
+    state: disabled
+  when: ansible_os_family == 'RedHat'
+
+- name: Install Kubernetes (CentOS)
+  yum:
+    name:
+      - "kubelet-{{ k8s_version }}"
+      - "kubeadm-{{ k8s_version }}"
+      - "kubectl-{{ k8s_version }}"
+    state: present
+    update_cache: yes
+  when: ansible_os_family == 'RedHat'
+
+# ---------------------------------------------
+
+- name: Load br_netfilter kernel module
+  modprobe:
+    name: br_netfilter
+    state: present
+
+- name: Set bridge-nf-call-iptables
+  sysctl:
+    name: net.bridge.bridge-nf-call-iptables
+    value: 1
+
+- name: Set bridge-nf-call-ip6tables
+  sysctl:
+    name: net.bridge.bridge-nf-call-ip6tables
+    value: 1
+
+- name: Set ip_forward
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: 1
+

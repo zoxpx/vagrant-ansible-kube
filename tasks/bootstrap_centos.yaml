@@ -1,0 +1,17 @@
+---
+- name: "Install basic packages (CentOS)"
+  yum:
+    name:
+      - unzip
+      - tar
+      - curl
+      - btrfs-progs
+      - libseccomp
+      - socat
+      - util-linux
+      - libselinux-python
+      - epel-release
+      - e2fsprogs
+      - yum-plugin-versionlock
+      - ca-certificates
+    state: latest

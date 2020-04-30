@@ -1,0 +1,7 @@
+---
+- name: Turn off swap
+  shell: |
+    if [ `wc -l < /proc/swaps` -gt 1 ]; then
+      awk '/swap/{print $1}' /etc/fstab | xargs -n1 swapoff
+      sed -i -e 's/.*swap.*/# \0  # ANSIBLE/' /etc/fstab
+    fi

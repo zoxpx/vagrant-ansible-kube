@@ -1,0 +1,28 @@
+---
+- name: Make kubelet dir
+  file:
+    path: "{{ kubelet_dir }}"
+    state: directory
+    mode: '0755'
+    owner: root
+    group: root
+  when: kubelet_dir is defined
+
+- name: Update kubelet root-dir (CentOS)
+  lineinfile:
+    path: {{ kubelet_vars }}
+    state: present
+    regexp: '^KUBELET_EXTRA_ARGS='
+    line: 'KUBELET_EXTRA_ARGS=--root-dir={{ kubelet_dir }}'
+  when: kubelet_dir is defined
+
+# ---------------------------------------------
+
+- name: Update kubelet for containerd
+  lineinfile:
+    path: {{ kubelet_vars }}
+    state: present
+    regexp: '^KUBELET_EXTRA_ARGS='
+    line: 'KUBELET_EXTRA_ARGS=--runtime-cgroups=/system.slice/containerd.service --container-runtime=remote --runtime-request-timeout=15m --container-runtime-endpoint=unix:///run/containerd/containerd.sock"'
+  when: cri_runtime == 'containerd'
+

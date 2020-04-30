@@ -1,0 +1,44 @@
+---
+- name: CA extras dir (Ubuntu)
+  command: mkdir -p /usr/share/ca-certificates/extra
+  ignore_errors: true
+  when: ansible_os_family == 'Debian'
+
+- name: Create PWX_ca (Ubuntu)
+  copy:
+    owner: root
+    group: root
+    mode: '0600'
+    dest: '/usr/share/ca-certificates/extra/PWX_ca.crt'
+    content: {{ pwx_ca }}
+  when: ansible_os_family == 'Debian'
+
+- name: Add PWX_ca (Ubuntu)
+  lineinfile:
+    path: /etc/ca-certificates.conf
+    state: present
+    line: 'extra/PWX_ca.crt'
+  when: ansible_os_family == 'Debian'
+
+- name: Refresh certs (Ubuntu)
+  command: /usr/sbin/update-ca-certificates
+  when: ansible_os_family == 'Debian'
+
+# ---------------------------------------------
+
+- name: Refresh certs (CentOS)
+  command: update-ca-trust force-enable
+  when: ansible_os_family == 'RedHat'
+
+- name: Create PWX_ca (CentOS)
+  copy:
+    owner: root
+    group: root
+    mode: '0600'
+    dest: '/etc/pki/ca-trust/source/anchors/PWX_ca.crt'
+    content: {{ pwx_ca }}
+  when: ansible_os_family == 'RedHat'
+
+- name: Extract certs (CentOS)
+  command: update-ca-trust extract
+  when: ansible_os_family == 'RedHat'
