@@ -6,7 +6,7 @@ PLAY	= ansible-playbook -i .hosts --ssh-common-args "-F .ssh_conf"
 	vagrant ssh-config > $@
 
 .hosts:	.ssh_conf
-	awk '/^Host /{print $$2}' .ssh_conf > $@
+	awk '/^Host /{print $$2,"	  # cri_runtime={docker|docker_latest|containerd}"}' .ssh_conf > $@
 
 install: playbook.yaml .hosts
 	$(PLAY) $<
