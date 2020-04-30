@@ -1,0 +1,62 @@
+---
+- name: Add CRI-O gpg key (Ubuntu)
+  apt_key:
+    url: http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_18.04/Release.key
+    state: present
+  when: cri_runtime == 'cri-o' and ansible_os_family == 'Debian'
+
+- name: Add CRI-O repository (Ubuntu)
+  apt_repository:
+    repo: "deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_18.04/ /"
+    state: present
+    filename: "crio"
+  when: cri_runtime == 'cri-o' and ansible_os_family == 'Debian'
+
+- name: Install CRI-O (Ubuntu)
+  apt:
+    name:
+      - 'cri-o-{{ crio_version }}'
+      - 'podman'
+      - 'cri-tools'
+    state: present
+    update_cache: yes
+  when: cri_runtime == 'cri-o' and ansible_os_family == 'Debian'
+
+# ---------------------------------------------
+
+# ... from: http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.17/CentOS_7/devel:kubic:libcontainers:stable:cri-o:1.17.repo
+- name: Add repository (CentOS)
+  yum_repository:
+    name: devel_kubic_libcontainers_stable
+    description: Stable Releases of Upstream github.com/containers packages (CentOS_7)
+    baseurl: http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/{{ crio_version }}/CentOS_7/
+    gpgcheck: yes
+    gpgkey: http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/{{ crio_version }}/CentOS_7/repodata/repomd.xml.key
+    enabled: yes
+  when: cri_runtime == 'cri-o' and ansible_os_family == 'RedHat'
+
+- name: Install CRI-O (CentOS)
+  yum:
+    name:
+      - 'cri-o'
+      - 'podman'
+#     - 'cri-tools'
+    state: present
+    update_cache: yes
+  when: cri_runtime == 'cri-o' and ansible_os_family == 'RedHat'
+
+- name: Update CRI-O conf (Ubuntu)
+  lineinfile:
+    path: /etc/crio/crio.conf
+    state: present
+    regexp: '^conmon\s*=.*'
+    line: 'conmon = "/usr/bin/conmon"'
+  when: cri_runtime == 'cri-o'
+
+- name: Enable CRI-O
+  systemd:
+    name: crio
+    daemon_reload: yes
+    state: started
+    enabled: yes
+  when: cri_runtime == 'cri-o'

@@ -1,7 +1,8 @@
 ---
 - name: CA extras dir (Ubuntu)
-  command: mkdir -p /usr/share/ca-certificates/extra
-  ignore_errors: true
+  file:
+    path: '/usr/share/ca-certificates/extra'
+    state: directory
   when: ansible_os_family == 'Debian'
 
 - name: Create PWX_ca (Ubuntu)
@@ -10,7 +11,7 @@
     group: root
     mode: '0600'
     dest: '/usr/share/ca-certificates/extra/PWX_ca.crt'
-    content: {{ pwx_ca }}
+    content: "{{ pwx_ca }}"
   when: ansible_os_family == 'Debian'
 
 - name: Add PWX_ca (Ubuntu)
@@ -36,7 +37,7 @@
     group: root
     mode: '0600'
     dest: '/etc/pki/ca-trust/source/anchors/PWX_ca.crt'
-    content: {{ pwx_ca }}
+    content: "{{ pwx_ca }}"
   when: ansible_os_family == 'RedHat'
 
 - name: Extract certs (CentOS)

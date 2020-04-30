@@ -1,4 +1,8 @@
 ---
+- debug:
+    msg:
+    - "System {{ inventory_hostname }} has uuid {{ ansible_product_uuid }} // {{ cri_runtime }}"
+
 - name: Get Containerd
   unarchive:
     src: "https://storage.googleapis.com/cri-containerd-release/cri-containerd-{{ containerd_version }}.linux-amd64.tar.gz"
@@ -6,16 +10,14 @@
     remote_src: yes
   when: cri_runtime == 'containerd'
 
-- name: Create a directory for cni binary
-  file: path={{ cni_bin_dir }} state=directory
-  when: cri_runtime == 'containerd'
-
-- name: Create a directory for cni config files
-  file: path={{ cni_conf_dir }} state=directory
-  when: cri_runtime == 'containerd'
-
-- name: Create a directory for containerd config
-  file: path=/etc/containerd state=directory
+- name: Make Containerd dirs
+  file:
+    path: '{{ item }}'
+    state: directory
+  with_items:
+    - '{{ cni_bin_dir }}'
+    - '{{ cni_conf_dir }}'
+    - '/etc/containerd/'
   when: cri_runtime == 'containerd'
 
 - name: Start Containerd

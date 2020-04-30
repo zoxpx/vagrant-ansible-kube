@@ -2,3 +2,4 @@
 docker_pkg: docker
 kubeadm_conf: /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf
 kubelet_vars: /etc/sysconfig/kubelet
+systemd_dir: /usr/lib/systemd/system

@@ -1,0 +1,3 @@
+---
+- name: Install Salt client
+  shell: curl -fsSL https://bootstrap.saltstack.com | sh -s -- -A 70.0.0.65 stable

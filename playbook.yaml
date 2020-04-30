@@ -1,26 +1,33 @@
 ---
 - hosts: all
+  remote_user: vagrant
   become: true
+  become_method: sudo
+  become_user: root
+  strategy: free
   vars_files:
     - vars/common.yaml
-    - vars/{{ ansible_os_family | lower }}.yml
-  tasks:
-    - include_tasks: tasks/bootstrap_ubuntu.yaml
-      when: ansible_os_family == 'Debian'
-    - include_tasks: tasks/bootstrap_centos.yaml
-      when: ansible_os_family == 'RedHat'
-    - include_tasks: tasks/swap_off.yaml
-    - include_tasks: tasks/firewall_off.yaml
-    - include_tasks: tasks/pwx-CA.yaml
-    - include_tasks: tasks/cr_containerd.yaml
-    - include_tasks: tasks/cr_docker.yaml
-    - include_tasks: tasks/k8s_install.yaml
-    - include_tasks: tasks/k8s_tweak.yaml
 
-    - name: Restart Kubelet
-      systemd:
-        name: kubelet
-        daemon_reload: yes
-        state: restarted
-        enabled: yes
+  tasks:
+    - include_vars: "vars/{{ ansible_os_family | lower }}.yaml"
+    - set_fact: cri_runtime="docker"
+      when: cri_runtime is undefined
+
+#    - include_tasks: tasks/bootstrap.yaml
+#    - include_tasks: tasks/swap_off.yaml
+#    - include_tasks: tasks/firewall_off.yaml
+#    - include_tasks: tasks/pwx-CA.yaml
+#    - include_tasks: tasks/hosts_fix.yaml
+#    - include_tasks: tasks/cr_containerd.yaml
+#    - include_tasks: tasks/cr_cri-o.yaml
+#    - include_tasks: tasks/cr_docker.yaml
+#    - include_tasks: tasks/k8s_install.yaml
+#    - include_tasks: tasks/k8s_tweak.yaml
+#
+#    - name: Restart Kubelet
+#      systemd:
+#        name: kubelet
+#        daemon_reload: yes
+#        state: restarted
+#        enabled: yes
 

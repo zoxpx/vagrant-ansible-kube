@@ -1,5 +1,5 @@
 ---
-- name: Add gpg key (Ubuntu)
+- name: Add Kubernetes gpg key (Ubuntu)
   apt_key:
     url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
     state: present

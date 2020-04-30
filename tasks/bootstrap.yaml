@@ -1,0 +1,36 @@
+---
+- name: "Install basic packages (Ubuntu)"
+  apt:
+    name:
+      - unzip
+      - tar
+      - curl
+      - btrfs-tools
+      - libseccomp2
+      - socat
+      - util-linux
+      - apt-transport-https
+      - ca-certificates
+      - linux-headers-{{ ansible_kernel }}
+    state: latest
+  when: ansible_os_family == 'Debian'
+
+# ---------------------------------------------
+
+- name: "Install basic packages (CentOS)"
+  yum:
+    name:
+      - unzip
+      - tar
+      - curl
+      - btrfs-progs
+      - libseccomp
+      - socat
+      - util-linux
+      - libselinux-python
+      - epel-release
+      - e2fsprogs
+      - yum-plugin-versionlock
+      - ca-certificates
+    state: latest
+  when: ansible_os_family == 'RedHat'
