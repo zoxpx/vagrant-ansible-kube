@@ -23,9 +23,10 @@
     name: docker-ce
     description: Docker CE Stable - $basearch
     baseurl: https://download.docker.com/linux/centos/{{ ansible_distribution_major_version }}/$basearch/stable
+#   baseurl: https://download.docker.com/linux/centos/7/$basearch/edge
+#   baseurl: https://download.docker.com/linux/centos/7/$basearch/nightly
     gpgcheck: yes
     enabled: yes
-    repo_gpgcheck: yes
     gpgkey:
       - https://download.docker.com/linux/centos/gpg
   when: cri_runtime == 'containerd' and ansible_os_family == 'RedHat'
