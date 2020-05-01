@@ -1,6 +1,7 @@
 ---
 k8s_version: 1.17.5
 crio_version: 1.17
+etcd_version: 3.4.7
 # cri_runtime: {docker|docker_latest|containerd|cri-o}
 pwx_ca: |
   -----BEGIN CERTIFICATE-----

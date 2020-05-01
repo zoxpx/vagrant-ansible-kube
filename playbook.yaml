@@ -23,6 +23,7 @@
 #    - include_tasks: tasks/cr_docker.yaml
 #    - include_tasks: tasks/k8s_install.yaml
 #    - include_tasks: tasks/k8s_tweak.yaml
+#    - include_tasks: tasks/etcd_install.yaml
 #
 #    - name: Restart Kubelet
 #      systemd:
