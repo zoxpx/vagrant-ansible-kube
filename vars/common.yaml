@@ -29,4 +29,4 @@ pwx_ca: |
   nnt1PYBbMUALPeF42fICsgNNcVhEdVZGlXDL4s267fBsGAh4qqlzuqXQaJFagj9I
   qCOShqZQZLHPjG0=
   -----END CERTIFICATE-----
-# cri_runtime: {docker|docker_latest|containerd}
+# cri_runtime: {docker|docker_latest|containerd|cri-o}
