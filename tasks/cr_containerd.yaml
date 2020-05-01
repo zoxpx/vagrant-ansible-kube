@@ -40,22 +40,6 @@
     update_cache: yes
   when: cri_runtime == 'containerd'
 
-- name: Start Containerd
-# systemd: name=containerd daemon_reload=yes state=started enabled=yes
-  systemd:
-    name: containerd
-    daemon_reload: yes
-    state: started
-    enabled: yes
-  when: cri_runtime == 'containerd'
-
-- name: Install Containerd
-  package:
-    name: 'containerd.io'
-    state: present
-    update_cache: yes
-  when: cri_runtime == 'containerd'
-
 - name: Make Containerd directory
   file:
     path: '/etc/containerd'
@@ -67,6 +51,22 @@
   args:
     chdir: /etc/containerd
     creates: /etc/containerd/config.toml
+  when: cri_runtime == 'containerd'
+
+- name: Check Containerd CRI plugin
+  lineinfile:
+    path: /etc/containerd/config.toml
+    regexp: '^disabled_plugins\s*=(.*cri.*)'
+    line: '# disabled_plugins=\1'
+    backrefs: yes
+
+- name: Restart Containerd
+  # systemd: name=containerd daemon_reload=yes state=started enabled=yes
+  systemd:
+    name: containerd
+    daemon_reload: yes
+    state: restarted
+    enabled: yes
   when: cri_runtime == 'containerd'
 
 - name: Create /etc/crictl.yaml file for Containerd

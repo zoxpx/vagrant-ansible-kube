@@ -19,13 +19,13 @@
 
 # ---------------------------------------------
 
-- name: Update kubelet for containerd
+- name: Update kubelet for Containerd
   lineinfile:
     path: '{{ kubelet_vars }}'
     state: present
     create: yes
     regexp: '^KUBELET_EXTRA_ARGS='
-    line: 'KUBELET_EXTRA_ARGS=--runtime-cgroups=/system.slice/containerd.service --runtime-request-timeout=15m --container-runtime=remote --container-runtime-endpoint=unix:///run/containerd/containerd.sock"'
+    line: 'KUBELET_EXTRA_ARGS=--runtime-cgroups=/system.slice/containerd.service --runtime-request-timeout=15m --container-runtime=remote --container-runtime-endpoint=unix:///run/containerd/containerd.sock'
   when: cri_runtime == 'containerd'
 
 # ---------------------------------------------
@@ -39,3 +39,9 @@
     line: 'KUBELET_EXTRA_ARGS=--feature-gates="AllAlpha=false,RunAsGroup=true" --cgroup-driver=systemd --runtime-request-timeout=5m --container-runtime=remote --container-runtime-endpoint=unix:///var/run/crio/crio.sock'
   when: cri_runtime == 'cri-o'
 
+- name: Enable kubelet
+  systemd:
+    name: kubelet
+    daemon_reload: yes
+    state: restarted
+    enabled: yes
