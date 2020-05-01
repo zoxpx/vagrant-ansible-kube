@@ -3,7 +3,7 @@
     msg:
     - "Installing {{ cri_runtime }} on {{ inventory_hostname }} with uuid {{ ansible_product_uuid }}"
 
-- name: Add Docker GPG key (Ubuntu)
+- name: Add Docker gpg key (Ubuntu)
   apt_key:
     url: https://download.docker.com/linux/ubuntu/gpg
     state: present
@@ -59,6 +59,7 @@
     regexp: '^disabled_plugins\s*=(.*cri.*)'
     line: '# disabled_plugins=\1'
     backrefs: yes
+  when: cri_runtime == 'containerd'
 
 - name: Restart Containerd
   # systemd: name=containerd daemon_reload=yes state=started enabled=yes
@@ -79,3 +80,4 @@
       runtime-endpoint: unix:///run/containerd/containerd.sock
       image-endpoint: unix:///run/containerd/containerd.sock
       timeout: 10
+  when: cri_runtime == 'containerd'

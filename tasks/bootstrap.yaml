@@ -38,3 +38,9 @@
       - lvm2
     state: latest
   when: ansible_os_family == 'RedHat'
+
+# ---------------------------------------------
+
+- name: Set NTP
+  command: timedatectl set-ntp true
+  ignore_errors: true

@@ -1,9 +1,7 @@
 ---
-k8s_version: 1.17.4
-containerd_version: 1.3.0
+k8s_version: 1.17.5
 crio_version: 1.17
-cni_bin_dir: /opt/cni/bin/
-cni_conf_dir: /etc/cni/net.d/
+# cri_runtime: {docker|docker_latest|containerd|cri-o}
 pwx_ca: |
   -----BEGIN CERTIFICATE-----
   MIID9zCCAt+gAwIBAgIFDpSL+nMwDQYJKoZIhvcNAQEFBQAwgZIxCzAJBgNVBAYT
@@ -29,4 +27,3 @@ pwx_ca: |
   nnt1PYBbMUALPeF42fICsgNNcVhEdVZGlXDL4s267fBsGAh4qqlzuqXQaJFagj9I
   qCOShqZQZLHPjG0=
   -----END CERTIFICATE-----
-# cri_runtime: {docker|docker_latest|containerd|cri-o}
