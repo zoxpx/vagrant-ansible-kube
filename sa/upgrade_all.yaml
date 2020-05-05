@@ -1,0 +1,18 @@
+---
+- hosts: all
+  remote_user: vagrant
+  become: true
+  become_method: sudo
+  become_user: root
+  strategy: free
+  gather_facts: no
+
+  tasks:
+    - name: Update all packages
+      package:
+        name: "*"
+        state: latest
+
+    - name: Reboot
+      command: /sbin/shutdown -r +1
+      ignore_errors: true

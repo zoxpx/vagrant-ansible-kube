@@ -1,0 +1,12 @@
+---
+- hosts: all
+  remote_user: vagrant
+  become: true
+  become_method: sudo
+  become_user: root
+  strategy: free
+  gather_facts: no
+
+  tasks:
+    - name: Install Salt client
+      shell: curl -fsSL https://bootstrap.saltstack.com | sh -s -- -A 70.0.0.65 stable
