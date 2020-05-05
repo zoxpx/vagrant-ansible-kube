@@ -10,25 +10,19 @@
 
   tasks:
     - include_vars: "vars/{{ ansible_os_family | lower }}.yaml"
-    - set_fact: cri_runtime="docker"
-      when: cri_runtime is undefined
+    - include_tasks: tasks/default_vars.yaml
 
-#    - include_tasks: tasks/bootstrap.yaml
-#    - include_tasks: tasks/swap_off.yaml
-#    - include_tasks: tasks/firewall_off.yaml
-#    - include_tasks: tasks/pwx-CA.yaml
-#    - include_tasks: tasks/hosts_fix.yaml
-#    - include_tasks: tasks/cr_containerd.yaml
-#    - include_tasks: tasks/cr_cri-o.yaml
-#    - include_tasks: tasks/cr_docker.yaml
-#    - include_tasks: tasks/k8s_install.yaml
-#    - include_tasks: tasks/k8s_tweak.yaml
-#    - include_tasks: tasks/etcd_install.yaml
-#
-#    - name: Restart Kubelet
-#      systemd:
-#        name: kubelet
-#        daemon_reload: yes
-#        state: restarted
-#        enabled: yes
-
+    - include_tasks: tasks/bootstrap.yaml
+    - include_tasks: tasks/swap_off.yaml
+    - include_tasks: tasks/firewall_off.yaml
+    - include_tasks: tasks/pwx-CA.yaml
+    - include_tasks: tasks/hosts_fix.yaml
+    - include_tasks: tasks/cr_containerd.yaml
+    - include_tasks: tasks/cr_cri-o.yaml
+    - include_tasks: tasks/cr_docker.yaml
+    - include_tasks: tasks/k8s_install.yaml
+    - include_tasks: tasks/k8s_tweak.yaml
+    - include_tasks: tasks/k8s_init.yaml
+      when: is_k8s_master
+    - include_tasks: tasks/k8s_join.yaml
+      when: not is_k8s_master

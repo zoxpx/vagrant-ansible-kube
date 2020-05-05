@@ -5,7 +5,6 @@
     group: root
     shell: /bin/false
     state: present
-  when: inventory_hostname == play_hosts[0]
 
 - name: Make etcd dirs
   file:
@@ -17,7 +16,6 @@
     - /opt/etcd
     - /opt/etcd/bin
     - /opt/etcd/data
-  when: inventory_hostname == play_hosts[0]
 
 - name: Download/Unpack EtcD
   unarchive:
@@ -29,7 +27,7 @@
       - '1'
       - '--exclude'
       - 'etcd-v{{ etcd_version }}-linux-amd64/[A-Z]*'
-  when: inventory_hostname == play_hosts[0]
+    creates: /opt/etcd/bin/etcd
 
 - name: Create EtcD service file
   copy:
@@ -47,7 +45,7 @@
       Environment=ETCD_NAME=%H
       EnvironmentFile=-/etc/default/%p
       ExecStart=/opt/etcd/bin/etcd \
-          --advertise-client-urls http://localhost:2379,http://{{ hostvars[play_hosts[0]].ansible_eth1.ipv4.address }}:2379 \
+          --advertise-client-urls http://localhost:2379,http://{{ k8s_master_ip }}:2379 \
           --listen-client-urls http://0.0.0.0:2379 \
           --data-dir /opt/etcd/data \
           --auto-compaction-mode=revision --auto-compaction-retention=1000
@@ -57,7 +55,6 @@
 
       [Install]
       WantedBy=multi-user.target
-  when: inventory_hostname == play_hosts[0]
 
 - name: Enable EtcD
   systemd:
@@ -65,4 +62,3 @@
     daemon_reload: yes
     state: started
     enabled: yes
-  when: inventory_hostname == play_hosts[0]

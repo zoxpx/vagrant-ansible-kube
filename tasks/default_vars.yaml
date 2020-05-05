@@ -1,0 +1,15 @@
+---
+- set_fact: cri_runtime='docker'
+  when: cri_runtime is undefined
+- set_fact: k8s_master_ip='{{ hostvars[play_hosts[0]].ansible_eth1.ipv4.address }}'
+  when: k8s_master_ip is undefined
+- set_fact: is_k8s_master={{ k8s_master_ip in ansible_all_ipv4_addresses }}
+
+# ---------------------------------------------
+
+- set_fact: cri_sock='/run/containerd/containerd.sock'
+  when: cri_runtime == 'containerd'
+- set_fact: cri_sock='/var/run/crio/crio.sock'
+  when: cri_runtime == 'cri-o'
+- set_fact: cri_sock='/var/run/dockershim.sock'
+  when: cri_sock is undefined

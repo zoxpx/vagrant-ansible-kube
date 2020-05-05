@@ -1,0 +1,42 @@
+---
+- name: Run kubeadm reset
+  command: kubeadm reset --force --cri-socket={{ cri_sock }}
+  ignore_errors: true
+
+- name: Install EtcD
+  include: etcd_install.yaml
+
+- name: Create kubeadm config
+  copy:
+    mode: '0644'
+    dest: /etc/kubernetes/ansible.yaml
+    content: |
+      apiVersion: kubeadm.k8s.io/v1beta1
+      kind: InitConfiguration
+      bootstrapTokens:
+        - groups:
+            - system:bootstrappers:kubeadm:default-node-token
+          token: {{ k8s_token }}
+          ttl: "0"
+          usages:
+            - signing
+            - authentication
+      localAPIEndpoint:
+        advertiseAddress: {{ k8s_master_ip }}
+        bindPort: 6443
+      ---
+      apiVersion: kubeadm.k8s.io/v1beta1
+      kind: ClusterConfiguration
+      etcd:
+        external:
+          endpoints:
+            - http://{{ k8s_master_ip }}:2379
+
+- name: Run kubeadm init
+  command: kubeadm init --config /etc/kubernetes/ansible.yaml --cri-socket={{ cri_sock }}
+
+- name: Copy kube config, install kube network
+  shell: |
+    install -m 700 -d {{ ansible_env.HOME }}/.kube                                && \
+    install -m 644 /etc/kubernetes/admin.conf {{ ansible_env.HOME }}/.kube/config && \
+    kubectl apply -n kube-system -f "{{ k8s_net }}"

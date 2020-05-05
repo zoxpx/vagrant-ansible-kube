@@ -13,7 +13,11 @@
       - ca-certificates
       - software-properties-common
       - linux-headers-{{ ansible_kernel }}
+      - ntp
     state: latest
+  when: ansible_os_family == 'Debian'
+
+- systemd: name=ntp state=restarted enabled=yes
   when: ansible_os_family == 'Debian'
 
 # ---------------------------------------------
@@ -36,7 +40,11 @@
       - ca-certificates
       - device-mapper-persistent-data
       - lvm2
+      - ntp
     state: latest
+  when: ansible_os_family == 'RedHat'
+
+- systemd: name=ntpd state=restarted enabled=yes
   when: ansible_os_family == 'RedHat'
 
 # ---------------------------------------------

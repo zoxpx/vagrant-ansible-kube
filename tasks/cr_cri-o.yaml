@@ -45,12 +45,20 @@
     update_cache: yes
   when: cri_runtime == 'cri-o' and ansible_os_family == 'RedHat'
 
-- name: Update CRI-O conf (Ubuntu)
+- name: Update CRI-O conf / conmon
   lineinfile:
     path: /etc/crio/crio.conf
     state: present
     regexp: '^conmon\s*=.*'
     line: 'conmon = "/usr/bin/conmon"'
+  when: cri_runtime == 'cri-o'
+
+- name: Update CRI-O conf / cgroup_manager
+  lineinfile:
+    path: /etc/crio/crio.conf
+    state: present
+    regexp: '^cgroup_manager\s*=.*cgroupfs.*'
+    line: 'cgroup_manager = "systemd"'
   when: cri_runtime == 'cri-o'
 
 - name: Enable CRI-O

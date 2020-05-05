@@ -77,7 +77,7 @@
     mode: '0644'
     dest: '/etc/crictl.yaml'
     content: |
-      runtime-endpoint: unix:///run/containerd/containerd.sock
-      image-endpoint: unix:///run/containerd/containerd.sock
+      runtime-endpoint: unix://{{ cri_sock }}
+      image-endpoint: unix://{{ cri_sock }}
       timeout: 10
   when: cri_runtime == 'containerd'

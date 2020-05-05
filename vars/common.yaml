@@ -1,5 +1,8 @@
 ---
 k8s_version: 1.17.5
+# k8s_master_ip: 70.0.51.17
+k8s_token: 030ffd.5d7a97b7e0d23ba9
+k8s_net: "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
 crio_version: 1.17
 etcd_version: 3.4.7
 # cri_runtime: {docker|docker_latest|containerd|cri-o}
