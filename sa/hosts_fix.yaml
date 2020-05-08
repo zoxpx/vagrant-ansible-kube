@@ -1,0 +1,31 @@
+# NOTE: this task assumes main network interface is 'eth1'
+---
+- hosts: all
+  remote_user: vagrant
+  become: true
+  become_method: sudo
+  become_user: root
+
+  tasks:
+
+    - name: Update /etc/hosts
+      blockinfile:
+        path: /etc/hosts
+        block: |
+          {% for item in ansible_play_hosts %}
+          {{ hostvars[item].ansible_eth1.ipv4.address }}	{{ item }}
+          {% endfor %}
+
+    - name: Update network (CentOS)
+      lineinfile:
+        path: /etc/sysconfig/network
+        state: present
+        line: 'GATEWAYDEV=eth1'
+      when: ansible_os_family == 'RedHat'
+
+    - name: Restart network (CentOS)
+      systemd:
+        name: network
+        state: restarted
+      when: ansible_os_family == 'RedHat'
+
