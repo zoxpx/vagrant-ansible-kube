@@ -1,6 +1,6 @@
 PLAY	= ansible-playbook -i .hosts --ssh-common-args "-F .ssh_conf"
 
-.PHONY: install test distclean
+.PHONY: install test test-vars clean distclean
 
 .ssh_conf:
 	vagrant ssh-config > $@
@@ -17,6 +17,9 @@ test:	.hosts
 test-vars:	.hosts
 	ansible -i .hosts --ssh-common-args "-F .ssh_conf" all -m setup
 
-distclean:
+clean:
+	rm -fr .ssh_conf .hosts
+
+distclean: clean
 	vagrant destroy -f
-	rm -fr .ssh_conf .hosts .vagrant
+	rm -fr .vagrant
