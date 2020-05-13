@@ -5,6 +5,7 @@
   become_method: sudo
   become_user: root
   strategy: free
+# no_log: true
   vars_files:
     - vars/common.yaml
 
