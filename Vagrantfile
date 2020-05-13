@@ -1,12 +1,13 @@
 # -*- mode: ruby -*-
 # vim:ft=ruby:sw=3:et:
 
-vm_nodes = {            # EDIT to specify VM node names, and their private IP (vboxnet#)
+vm_nodes = {            # EDIT to specify VM node names, and their type (see #vm_conf below)
    'foo1' => 'bento16',
    'foo2' => 'bento16',
    'foo3' => 'bento16',
    'foo4' => 'centos7',
    'foo5' => 'centos7',
+   'foo6' => 'centos7',
 }
 
 # VM config, format: <type-label> => [ 0:vagrant-box, 1:vm-net-iface, 2:vm-disk-controller, 3:vm-start-port, 4:vm-drives-map ]
