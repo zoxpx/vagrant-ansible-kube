@@ -11,7 +11,7 @@
         name:
           - zsh
           - git
-          - moreutils
+          - rsync
           - psmisc
           - net-tools
           - jq
