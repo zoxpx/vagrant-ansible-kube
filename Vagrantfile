@@ -16,6 +16,7 @@ vm_conf = {
    'bento16' => [ 'bento/ubuntu-16.04', 'eth1', 'SATA Controller', 1, { "sdb" => 15*1024, "sdc" => 20*1024 } ],
    'bento18' => [ 'bento/ubuntu-18.04', 'eth1', 'SATA Controller', 1, { "sdb" => 15*1024, "sdc" => 20*1024 } ],
    'centos7'  => [ 'centos/7', 'eth1', 'IDE', 1, { "sdb" => 20*1024 } ],
+   'centos8'  => [ 'generic/centos8', 'eth1', 'IDE Controller', 1, { "sdb" => 20*1024 } ],
    'fedora29'  => [ 'generic/fedora29', 'eth1', 'IDE Controller', 1, { "sdb" => 20*1024 } ],
    'rhel7'  => [ 'generic/rhel7', 'eth1', 'IDE Controller', 1, { "sdb" => 20*1024 } ],
    # -- NOT supported for Kubernetes:
