@@ -6,7 +6,7 @@
     shell: /bin/false
     state: present
 
-- name: Make etcd dirs
+- name: Make etcd dirs (1)
   file:
     path: '{{ item }}'
     state: directory
@@ -15,6 +15,14 @@
   with_items:
     - /opt/etcd
     - /opt/etcd/bin
+
+- name: Make etcd dirs (2)
+  file:
+    path: '{{ item }}'
+    state: directory
+    owner: etcd
+    mode: '0700'
+  with_items:
     - /opt/etcd/data
 
 - name: Download/Unpack EtcD
