@@ -18,7 +18,7 @@ test-vars:	.hosts
 	ansible -i .hosts --ssh-common-args "-F .ssh_conf" all -m setup
 
 clean:
-	rm -fr .ssh_conf .hosts
+	rm -f .ssh_conf .hosts
 
 distclean: clean
 	vagrant destroy -f

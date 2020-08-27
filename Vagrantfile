@@ -92,7 +92,8 @@ Vagrant.configure("2") do |config|
                if [ -f /etc/sysconfig/network ]; then
                   echo ':: Fixing GATEWAYDEV  (CentOS) ...'
                   echo 'GATEWAYDEV=#{mynic}' >> /etc/sysconfig/network
-                  systemctl restart network
+                  systemctl restart network || \
+                  ( systemctl restart NetworkManager; sleep 3; nmcli networking off; nmcli networking on )
                fi
                echo ":: IPs $(hostname -I)"
             SHELL
