@@ -23,6 +23,7 @@ vm_conf = {
    'ubuntu14' => [ 'ubuntu/trusty64', 'eth1', 'SATAController', 1, { "sdb" => 15*1024, "sdc" => 20*1024 } ],
    'debian8'  => [ 'debian/jessie64', 'eth1', 'SATA Controller', 1, { "sdb" => 15*1024, "sdc" => 20*1024 } ],
    'debian9'  => [ 'debian/stretch64', 'eth1', 'SATA Controller', 1, { "sdb" => 15*1024, "sdc" => 20*1024 } ],
+   'debian10'  => [ 'debian/buster64', 'eth1', 'SATA Controller', 1, { "sdb" => 15*1024, "sdc" => 20*1024 } ],
 }
 
 #
