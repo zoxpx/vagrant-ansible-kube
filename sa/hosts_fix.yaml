@@ -5,6 +5,7 @@
   become: true
   become_method: sudo
   become_user: root
+  strategy: free
 
   tasks:
 
