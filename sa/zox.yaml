@@ -11,6 +11,8 @@
       package:
         name:
           - epel-release
+          - container-selinux
+          - selinux-policy-base
         state: present
         update_cache: yes
       when: ansible_os_family == 'RedHat'
@@ -19,6 +21,7 @@
       package:
         name:
           - zsh
+          - curl
           - git
           - rsync
           - psmisc
