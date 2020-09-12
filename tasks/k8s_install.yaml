@@ -33,14 +33,9 @@
     gpgcheck: yes
     enabled: yes
     repo_gpgcheck: yes
-    gpgkey: 
+    gpgkey:
       - https://packages.cloud.google.com/yum/doc/yum-key.gpg
       - https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
-  when: ansible_os_family == 'RedHat'
-
-- name: Disable SELinux (CentOS)
-  selinux:
-    state: disabled
   when: ansible_os_family == 'RedHat'
 
 - name: Install Kubernetes (CentOS)
