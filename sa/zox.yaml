@@ -48,7 +48,7 @@
 ## create passwd w/ mkpasswd --method=sha-512
         password: '$6$sw16qsF1uSkyp$aIfc1qYflfBWMZDPFhtNXc/wcWUC0UmuNZdDmVjS56iNj4YYFAu19hYbkYXMu/LokB6rEjH/8F9IUm/ZvTG251'
         uid: 501
-        group: 100
+        group: users
         groups:
           - bin
           - systemd-journal
@@ -58,9 +58,9 @@
     - name: Unpack /home/zox
       unarchive:
         src: /srv/salt/zox/zox_home.tar.gz
-        dest: /home/zox
+        dest: /
         extra_opts:
-          - '-zvPp'
+          - '-zPp'
         creates: /home/zox/.vim/colors/zox.vim
 
     - name: Create sudo for zox
