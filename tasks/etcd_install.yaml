@@ -8,38 +8,38 @@
 
 - name: Make etcd dirs (1)
   file:
-    path: '{{ item }}'
+    path: "{{ item }}"
     state: directory
     owner: etcd
-    mode: '0755'
+    mode: "0755"
   with_items:
     - /opt/etcd
     - /opt/etcd/bin
 
 - name: Make etcd dirs (2)
   file:
-    path: '{{ item }}'
+    path: "{{ item }}"
     state: directory
     owner: etcd
-    mode: '0700'
+    mode: "0700"
   with_items:
     - /opt/etcd/data
 
 - name: Download/Unpack EtcD
   unarchive:
-    src: 'https://github.com/etcd-io/etcd/releases/download/v{{ etcd_version }}/etcd-v{{ etcd_version }}-linux-amd64.tar.gz'
+    src: "https://github.com/etcd-io/etcd/releases/download/v{{ etcd_version }}/etcd-v{{ etcd_version }}-linux-amd64.tar.gz"
     dest: /opt/etcd/bin
     remote_src: yes
     extra_opts:
-      - '--strip'
-      - '1'
-      - '--exclude'
-      - 'etcd-v{{ etcd_version }}-linux-amd64/[A-Z]*'
+      - "--strip"
+      - "1"
+      - "--exclude"
+      - "etcd-v{{ etcd_version }}-linux-amd64/[A-Z]*"
     creates: /opt/etcd/bin/etcd
 
 - name: Create EtcD service file
   copy:
-    mode: '0644'
+    mode: "0644"
     dest: /lib/systemd/system/etcd.service
     content: |
       [Unit]

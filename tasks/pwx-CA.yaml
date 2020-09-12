@@ -1,15 +1,15 @@
 ---
 - name: CA extras directory check
   file:
-    path: '{{ ca_certs_dir }}'
+    path: "{{ ca_certs_dir }}"
     state: directory
 
 - name: Create PWX CA file
   copy:
     owner: root
     group: root
-    mode: '0600'
-    dest: '{{ ca_certs_dir }}/PWX_ca.crt'
+    mode: "0600"
+    dest: "{{ ca_certs_dir }}/PWX_ca.crt"
     content: "{{ pwx_ca }}"
 
 # ---------------------------------------------
@@ -18,7 +18,7 @@
   lineinfile:
     path: /etc/ca-certificates.conf
     state: present
-    line: 'extra/PWX_ca.crt'
+    line: "extra/PWX_ca.crt"
   when: ansible_os_family == 'Debian'
 
 - name: Refresh certs (Ubuntu)

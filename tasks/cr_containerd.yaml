@@ -1,7 +1,7 @@
 ---
 - debug:
     msg:
-    - "Installing {{ cri_runtime }} on {{ inventory_hostname }} with uuid {{ ansible_product_uuid }}"
+      - "Installing {{ cri_runtime }} on {{ inventory_hostname }} with uuid {{ ansible_product_uuid }}"
 
 - name: Add Docker gpg key (Ubuntu)
   apt_key:
@@ -34,14 +34,14 @@
 
 - name: Install Containerd
   package:
-    name: 'containerd.io'
+    name: "containerd.io"
     state: present
     update_cache: yes
   when: cri_runtime == 'containerd'
 
 - name: Make Containerd directory
   file:
-    path: '/etc/containerd'
+    path: "/etc/containerd"
     state: directory
   when: cri_runtime == 'containerd'
 
@@ -73,8 +73,8 @@
   copy:
     owner: root
     group: root
-    mode: '0644'
-    dest: '/etc/crictl.yaml'
+    mode: "0644"
+    dest: "/etc/crictl.yaml"
     content: |
       runtime-endpoint: unix://{{ cri_sock }}
       image-endpoint: unix://{{ cri_sock }}

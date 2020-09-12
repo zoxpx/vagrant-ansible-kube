@@ -4,7 +4,7 @@
 
 - name: Create kubeadm config
   copy:
-    mode: '0644'
+    mode: "0644"
     dest: /etc/kubernetes/ansible.yaml
     content: |
       apiVersion: kubeadm.k8s.io/v1beta2

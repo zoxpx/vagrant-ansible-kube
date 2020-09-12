@@ -15,9 +15,9 @@
 - name: Install CRI-O (Ubuntu)
   apt:
     name:
-      - 'cri-o-{{ crio_version }}'
-      - 'podman'
-      - 'cri-tools'
+      - "cri-o-{{ crio_version }}"
+      - "podman"
+      - "cri-tools"
     state: present
     update_cache: yes
   when: cri_runtime == 'cri-o' and ansible_os_family == 'Debian'
@@ -38,9 +38,9 @@
 - name: Install CRI-O (CentOS)
   yum:
     name:
-      - 'cri-o'
-      - 'podman'
-#     - 'cri-tools'
+      - "cri-o"
+      - "podman"
+#     - "cri-tools"
     state: present
     update_cache: yes
   when: cri_runtime == 'cri-o' and ansible_os_family == 'RedHat'
