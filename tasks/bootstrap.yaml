@@ -5,7 +5,6 @@
       - unzip
       - tar
       - curl
-      - btrfs-tools
       - libseccomp2
       - socat
       - util-linux
@@ -13,12 +12,30 @@
       - ca-certificates
       - software-properties-common
       - linux-headers-{{ ansible_kernel }}
-      - ntp
     state: latest
   when: ansible_os_family == 'Debian'
 
+- name: "Install basic packages (Ubuntu 16)"
+  apt:
+    name:
+      - btrfs-tools
+      - ntp
+    state: latest
+  when: ansible_os_family == 'Debian' and ansible_distribution_major_version|int <= 18
+
 - systemd: name=ntp state=restarted enabled=yes
-  when: ansible_os_family == 'Debian'
+  when: ansible_os_family == 'Debian' and ansible_distribution_major_version|int <= 18
+
+- name: "Install basic packages (Ubuntu 18+)"
+  apt:
+    name:
+      - btrfs-progs
+      - systemd-timesyncd
+    state: latest
+  when: ansible_os_family == 'Debian' and ansible_distribution_major_version|int > 18
+
+- systemd: name=systemd-timesyncd state=restarted enabled=yes
+  when: ansible_os_family == 'Debian' and ansible_distribution_major_version|int > 18
 
 # ---------------------------------------------
 
@@ -49,6 +66,9 @@
       - ntp
   when: ansible_os_family == 'RedHat' and ansible_distribution_major_version|int <= 7
 
+- systemd: name=ntpd state=restarted enabled=yes
+  when: ansible_os_family == 'RedHat' and ansible_distribution_major_version|int <= 7
+
 - name: "Install basic packages (CentOS8)"
   yum:
     name:
@@ -56,9 +76,6 @@
       - policycoreutils-python-utils
       - chrony
   when: ansible_os_family == 'RedHat' and ansible_distribution_major_version|int >= 8
-
-- systemd: name=ntpd state=restarted enabled=yes
-  when: ansible_os_family == 'RedHat' and ansible_distribution_major_version|int <= 7
 
 - systemd: name=chronyd state=restarted enabled=yes
   when: ansible_os_family == 'RedHat' and ansible_distribution_major_version|int >= 8

@@ -16,11 +16,20 @@
   apt:
     name:
       - "cri-o-{{ crio_version }}"
-      - "podman"
       - "cri-tools"
     state: present
     update_cache: yes
   when: cri_runtime == 'cri-o' and ansible_os_family == 'Debian'
+
+# podman install broken on ubuntu -- attempting to install as "optional"
+- name: Attempting to install podman (Ubuntu)
+  apt:
+    name:
+      - "podman"
+    state: present
+    update_cache: yes
+  when: cri_runtime == 'cri-o' and ansible_os_family == 'Debian'
+  ignore_errors: true
 
 # ---------------------------------------------
 

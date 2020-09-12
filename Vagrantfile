@@ -4,7 +4,7 @@
 
 # EDIT to specify VM node names, and their box-type
 # - see https://app.vagrantup.com/boxes/search for more VM images for libvirt-provider
-#   > i.e. Debian family: 'generic/ubuntu1604', 'generic/ubuntu1804'
+#   > i.e. Debian family: 'generic/ubuntu1604', 'generic/ubuntu1804', 'generic/ubuntu2004'
 #   > i.e. RedHat family: 'centos/7', 'centos/8', 'generic/centos8'
 vm_nodes = {
    'foo1' => 'generic/ubuntu1604',
