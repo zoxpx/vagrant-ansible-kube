@@ -1,0 +1,63 @@
+---
+# The following standalone playbook DESTROYS your Kubernetes cluster  (but leaves nodes running)
+
+- hosts: all
+  remote_user: vagrant
+  become: true
+  become_method: sudo
+  become_user: root
+  strategy: free
+  vars_files:
+    - ../vars/common.yaml
+
+  tasks:
+    - include: ../tasks/default_vars.yaml
+
+    - name: Run kubeadm reset
+      command: kubeadm reset --force --cri-socket={{ cri_sock }}
+      ignore_errors: true
+
+    - name: Stop K8s services
+      systemd:
+        name: '{{ item }}'
+        state: stopped
+        enabled: yes
+      with_items:
+        - kubelet
+        - docker
+        - etcd
+        - portworx
+        - crio
+        - containerd
+      ignore_errors: true
+
+    - name: Remove Portworx (if any)
+      shell: |
+        /opt/pwx/bin/pxctl sv nw --all
+        umount /opt/pwx/oci
+        rm -fr /opt/pwx/oci
+      ignore_errors: true
+
+    - name: Reset networks
+      shell: |
+        ip link set cni0 down
+        ip link set flannel.1 down
+        ip link set docker0 down
+
+        ip link delete cni0
+        ip link delete flannel.1
+      ignore_errors: true
+
+    - name: Reset iptables
+      shell: |
+        iptables -F
+        iptables -t nat -F
+        iptables -t mangle -F
+        iptables -X
+      ignore_errors: true
+
+    - name: Remove pods and CNI
+      shell: |
+        find /var/lib/kubelet/pods/ -type d -print0 | xargs -r0 chattr -i
+        rm -rf /var/lib/kubelet/* /var/lib/cni/ /etc/cni/ /opt/etcd/data/
+      ignore_errors: true

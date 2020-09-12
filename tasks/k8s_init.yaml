@@ -1,8 +1,4 @@
 ---
-- name: Run kubeadm reset
-  command: kubeadm reset --force --cri-socket={{ cri_sock }}
-  ignore_errors: true
-
 - name: Install EtcD
   include: etcd_install.yaml
 
@@ -39,9 +35,11 @@
 
 - name: Run kubeadm init
   command: kubeadm init --config /etc/kubernetes/ansible.yaml --cri-socket={{ cri_sock }}
+  args:
+    creates: /etc/kubernetes/manifests/kube-apiserver.yaml
 
 - name: Copy kube config, install kube network
   shell: |
-    install -m 700 -d {{ ansible_env.HOME }}/.kube                                && \
-    install -m 644 /etc/kubernetes/admin.conf {{ ansible_env.HOME }}/.kube/config && \
-    kubectl apply -n kube-system -f "{{ k8s_net }}"
+    install -m 700 -d '{{ ansible_env.HOME }}/.kube'                                && \
+    install -m 644 /etc/kubernetes/admin.conf '{{ ansible_env.HOME }}/.kube/config' && \
+    kubectl apply -n kube-system -f '{{ k8s_net }}'

@@ -1,14 +1,13 @@
 ---
-- name: Run kubeadm reset
-  command: kubeadm reset --force --cri-socket={{ cri_sock }}
-  ignore_errors: true
-
 - name: Wait for Kubernetes master
   wait_for:
     host: '{{ k8s_master_ip }}'
     port: 6443
-    delay: 10
   connection: local
 
 - name: Run kubeadm join
-  command: kubeadm join {{ k8s_master_ip }}:6443 --token {{ k8s_token }} --discovery-token-unsafe-skip-ca-verification --cri-socket={{ cri_sock }}
+  command: |
+    kubeadm join {{ k8s_master_ip }}:6443 --token {{ k8s_token }} \
+      --discovery-token-unsafe-skip-ca-verification --cri-socket={{ cri_sock }}
+  args:
+    creates: /etc/kubernetes/kubelet.conf
