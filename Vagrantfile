@@ -54,7 +54,7 @@ Vagrant.configure("2") do |config|
                   echo ':: Fixing GATEWAYDEV  (RedHat routing fix) ...'
                   echo 'GATEWAYDEV=eth1' >> /etc/sysconfig/network
                   systemctl restart network || \
-                  ( systemctl restart NetworkManager; sleep 3; nmcli networking off; nmcli networking on )
+                  ( systemctl restart NetworkManager; sleep 3; nmcli networking off; nmcli networking on; sleep 5 )
                fi
                echo ":: IPs $(hostname -I)"
             SHELL

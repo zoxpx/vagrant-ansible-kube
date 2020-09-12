@@ -6,7 +6,9 @@
   when: cri_runtime == 'docker'
 
 - name: Install Docker (latest)
-  shell: curl -fsSL https://get.docker.com | sh -s
+  shell: |
+    curl -fsSL https://get.docker.com | sh -s   || \
+    dnf install -y docker-ce --nobest
   when: cri_runtime == 'docker-ce'
 
 - name: Enable docker

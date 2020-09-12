@@ -28,11 +28,9 @@
       - unzip
       - tar
       - curl
-      - btrfs-progs
       - libseccomp
       - socat
       - util-linux
-      - libselinux-python
       - epel-release
       - e2fsprogs
       - yum-utils
@@ -40,15 +38,32 @@
       - ca-certificates
       - device-mapper-persistent-data
       - lvm2
-      - ntp
     state: latest
   when: ansible_os_family == 'RedHat'
 
+- name: "Install basic packages (CentOS7)"
+  yum:
+    name:
+      - btrfs-progs
+      - policycoreutils-python
+      - ntp
+  when: ansible_os_family == 'RedHat' and ansible_distribution_major_version|int <= 7
+
+- name: "Install basic packages (CentOS8)"
+  yum:
+    name:
+      - python3
+      - policycoreutils-python-utils
+      - chrony
+  when: ansible_os_family == 'RedHat' and ansible_distribution_major_version|int >= 8
+
 - systemd: name=ntpd state=restarted enabled=yes
-  when: ansible_os_family == 'RedHat'
+  when: ansible_os_family == 'RedHat' and ansible_distribution_major_version|int <= 7
+
+- systemd: name=chronyd state=restarted enabled=yes
+  when: ansible_os_family == 'RedHat' and ansible_distribution_major_version|int >= 8
 
 # ---------------------------------------------
 
 - name: Set NTP
   command: timedatectl set-ntp true
-  ignore_errors: true

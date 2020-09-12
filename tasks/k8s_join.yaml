@@ -1,9 +1,19 @@
 ---
+
+# workaround for CentOS8
+- set_fact: _python='/usr/bin/python3'
+  when: ansible_os_family == 'RedHat' and ansible_distribution_major_version|int >= 8
+
+- set_fact: _python='{{ansible_playbook_python}}'
+  when: _python is undefined
+
 - name: Wait for Kubernetes master
   wait_for:
     host: '{{ k8s_master_ip }}'
     port: 6443
   connection: local
+  vars:
+    ansible_python_interpreter: '{{ _python }}'
 
 - name: Run kubeadm join
   command: |

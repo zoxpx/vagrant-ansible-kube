@@ -22,9 +22,8 @@
   yum_repository:
     name: docker-ce
     description: Docker CE Stable - $basearch
-    baseurl: https://download.docker.com/linux/centos/{{ ansible_distribution_major_version }}/$basearch/stable
-#   baseurl: https://download.docker.com/linux/centos/7/$basearch/edge
-#   baseurl: https://download.docker.com/linux/centos/7/$basearch/nightly
+#   baseurl: https://download.docker.com/linux/centos/{{ ansible_distribution_major_version }}/$basearch/stable
+    baseurl: https://download.docker.com/linux/centos/7/$basearch/stable
     gpgcheck: yes
     enabled: yes
     gpgkey:
