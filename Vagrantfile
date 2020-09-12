@@ -55,6 +55,11 @@ Vagrant.configure("2") do |config|
                   echo 'GATEWAYDEV=eth1' >> /etc/sysconfig/network
                   systemctl restart network || \
                   ( systemctl restart NetworkManager; sleep 3; nmcli networking off; nmcli networking on; sleep 5 )
+               elif [ -f /etc/netplan/01-netcfg.yaml ]; then
+                  echo ':: Fixing NetPlan  (Ubuntu 18/20 routing fix) ...'
+                  sed -i -e 's/^\\( \\+\\)dhcp4: true/\\0\\n\\1dhcp4-overrides:\\n\\1  use-routes: false/' \
+                    /etc/netplan/01-netcfg.yaml && \
+                    netplan apply && sleep 5
                fi
                echo ":: IPs $(hostname -I)"
             SHELL
