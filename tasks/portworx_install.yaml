@@ -1,0 +1,3 @@
+---
+- name: Install Portworx (https://portworx.com)
+  command: kubectl apply -f 'https://install.portworx.com?mc=false&kbver={{ k8s_version }}&k=etcd%3Ahttp%3A%2F%2F{{ k8s_master_ip }}%3A2379&m=eth1&d=eth1&c=px-cluster-123&stork=true&st=k8s'

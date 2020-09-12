@@ -27,3 +27,5 @@
       when: is_k8s_master
     - include_tasks: tasks/k8s_join.yaml
       when: not is_k8s_master
+    - include_tasks: tasks/portworx_install.yaml
+      when: is_k8s_master
