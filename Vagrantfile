@@ -1,97 +1,58 @@
 # -*- mode: ruby -*-
 # vim:ft=ruby:sw=3:et:
 
-vm_nodes = {            # EDIT to specify VM node names, and their type (see #vm_conf below)
-   'foo1' => 'bento16',
-   'foo2' => 'bento16',
-   'foo3' => 'bento16',
-   'foo4' => 'centos7',
+
+# EDIT to specify VM node names, and their box-type
+# - see https://app.vagrantup.com/boxes/search for more VM images for libvirt-provider
+#   > i.e. Debian family: 'generic/ubuntu1604', 'generic/ubuntu1804'
+#   > i.e. RedHat family: 'centos/7', 'centos/8', 'generic/centos8'
+vm_nodes = {
+   'foo1' => 'generic/ubuntu1604',
+   'foo2' => 'generic/ubuntu1604',
+   'foo3' => 'generic/ubuntu1604',
+   'foo4' => 'centos/7',
+   'foo5' => 'centos/7',
 }
 
-# VM config, format: <type-label> => [ 0:vagrant-box, 1:vm-net-iface, 2:vm-disk-controller, 3:vm-start-port, 4:vm-drives-map ]
-# see https://app.vagrantup.com/boxes/search for more VM images (ie. "box-names")
-vm_conf = {
-   'ubuntu16' => [ 'ubuntu/xenial64', 'enp0s8', 'SCSI', 2, { "sdc" => 15*1024, "sdd" => 20*1024 } ],
-   'ubuntu18' => [ 'ubuntu/bionic64', 'enp0s8', 'SCSI', 2, { "sdc" => 15*1024, "sdd" => 20*1024 } ],
-   'bento16' => [ 'bento/ubuntu-16.04', 'eth1', 'SATA Controller', 1, { "sdb" => 15*1024, "sdc" => 20*1024 } ],
-   'bento18' => [ 'bento/ubuntu-18.04', 'eth1', 'SATA Controller', 1, { "sdb" => 15*1024, "sdc" => 20*1024 } ],
-   'centos7'  => [ 'centos/7', 'eth1', 'IDE', 1, { "sdb" => 20*1024 } ],
-   'centos8'  => [ 'generic/centos8', 'eth1', 'IDE Controller', 1, { "sdb" => 20*1024 } ],
-   'fedora29'  => [ 'generic/fedora29', 'eth1', 'IDE Controller', 1, { "sdb" => 20*1024 } ],
-   'rhel7'  => [ 'generic/rhel7', 'eth1', 'IDE Controller', 1, { "sdb" => 20*1024 } ],
-   # -- NOT supported for Kubernetes:
-   'ubuntu14' => [ 'ubuntu/trusty64', 'eth1', 'SATAController', 1, { "sdb" => 15*1024, "sdc" => 20*1024 } ],
-   'debian8'  => [ 'debian/jessie64', 'eth1', 'SATA Controller', 1, { "sdb" => 15*1024, "sdc" => 20*1024 } ],
-   'debian9'  => [ 'debian/stretch64', 'eth1', 'SATA Controller', 1, { "sdb" => 15*1024, "sdc" => 20*1024 } ],
-   'debian10'  => [ 'debian/buster64', 'eth1', 'SATA Controller', 1, { "sdb" => 15*1024, "sdc" => 20*1024 } ],
-}
+rootPassword = 'Password1'                   # set to enable root ssh-access
+ENV['VAGRANT_DEFAULT_PROVIDER'] = 'libvirt'  # force libvirt provider
 
-#
-# VAGRANT SETUP
-#
 Vagrant.configure("2") do |config|
+   config.vm.box_check_update = false
 
-   vm_nodes.each do |host,typ|
-
-      mybox, mynic, mycntrl, myport, extra_disks = vm_conf["#{typ}"]
-
+   vm_nodes.each do |host,box|
       config.vm.define "#{host}" do |node|
-
-         node.vm.box = "#{mybox}"
+         # vagrant host-setup
+         node.vm.box = "#{box}"
          node.vm.hostname = "#{host}"
-         node.vm.network "public_network", bridge: "eth0", use_dhcp_assigned_default_route: true
+         node.vm.network :public_network, :type => "bridge", dev: "br0", mode: "bridge",
+            network_name: "public_network", use_dhcp_assigned_default_route: true
 
-         node.vm.provider "virtualbox" do |v|
-            v.gui = false
+         # libvirt-specific host-tuning
+         node.vm.provider :libvirt do |v|
             v.memory = 4096
-            v.linked_clone = true
-
-            # Extra customizations
-            v.customize 'pre-boot', ["modifyvm", :id, "--cpus", "2"]
-            v.customize 'pre-boot', ["modifyvm", :id, "--chipset", "ich9"]
-            v.customize 'pre-boot', ["modifyvm", :id, "--audio", "none"]
-            v.customize 'pre-boot', ["modifyvm", :id, "--usb", "off"]
-            v.customize 'pre-boot', ["modifyvm", :id, "--accelerate3d", "off"]
-            v.customize 'pre-boot', ["storagectl", :id, "--name", "#{mycntrl}", "--hostiocache", "on"]
-
-            # force Virtualbox to sync the time difference w/ threshold 10s (defl was 20 minutes)
-            v.customize [ "guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-set-threshold", 10000 ]
-
-            # Net boot speedup (see https://github.com/mitchellh/vagrant/issues/1807)
-            v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
-            v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
-
-            if defined?(extra_disks)
-               # NOTE: If you hit errors w/ extra disks provisioning, you may need to run "Virtual
-               # Media Manager" via VirtualBox GUI, and manually remove $host_sdX drives.
-               port = myport
-               extra_disks.each do |hdd, size|
-                  vdisk_name = ".vagrant/#{host}_#{hdd}.vdi"
-                  unless File.exist?(vdisk_name)
-                     v.customize ['createhd', '--filename', vdisk_name, '--size', "#{size}"]
-                  end
-                  v.customize ['storageattach', :id, '--storagectl', "#{mycntrl}", '--port', port, '--device', 0, '--type', 'hdd', '--medium', vdisk_name]
-                  port = port + 1
-               end
-            end
+            v.cpus = 2
+            v.storage :file, :size => '20G'
          end
 
-         # Custom post-install script below:
+         # custom post-install
          node.vm.provision "shell" do |s|
             s.inline = <<-SHELL
-               echo ':: Fixing ROOT access ...'
-               echo root:Password1 | chpasswd
-               sed -i -e 's/.*UseDNS.*/UseDNS no  # VAGRANT/' \
-                  -e 's/.*PermitRootLogin.*/PermitRootLogin yes  # VAGRANT/' \
-                  -e 's/.*PasswordAuthentication.*/PasswordAuthentication yes  # VAGRANT/' \
-                  /etc/ssh/sshd_config && systemctl restart sshd
+               if [ -n '#{rootPassword}' ]; then
+                  echo ':: Fixing ROOT access ...'
+                  echo 'root:#{rootPassword}' | chpasswd
+                  sed -i -e 's/.*UseDNS.*/UseDNS no  # VAGRANT/' \
+                     -e 's/.*PermitRootLogin.*/PermitRootLogin yes  # VAGRANT/' \
+                     -e 's/.*PasswordAuthentication.*/PasswordAuthentication yes  # VAGRANT/' \
+                     /etc/ssh/sshd_config && systemctl restart sshd
+               fi
 
                echo ':: Fixing /etc/hosts ...'
                sed -i -e 's/.*#{host}.*/# \\0  # VAGRANT/' /etc/hosts
 
                if [ -f /etc/sysconfig/network ]; then
-                  echo ':: Fixing GATEWAYDEV  (CentOS) ...'
-                  echo 'GATEWAYDEV=#{mynic}' >> /etc/sysconfig/network
+                  echo ':: Fixing GATEWAYDEV  (RedHat routing fix) ...'
+                  echo 'GATEWAYDEV=eth1' >> /etc/sysconfig/network
                   systemctl restart network || \
                   ( systemctl restart NetworkManager; sleep 3; nmcli networking off; nmcli networking on )
                fi
@@ -101,4 +62,3 @@ Vagrant.configure("2") do |config|
       end
    end
 end
-

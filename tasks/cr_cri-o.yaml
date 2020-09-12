@@ -45,6 +45,8 @@
     update_cache: yes
   when: cri_runtime == 'cri-o' and ansible_os_family == 'RedHat'
 
+# ---------------------------------------------
+
 - name: Update CRI-O conf / conmon
   lineinfile:
     path: /etc/crio/crio.conf
