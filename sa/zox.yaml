@@ -21,6 +21,7 @@
       package:
         name:
           - zsh
+          - vim
           - curl
           - git
           - rsync
@@ -69,3 +70,12 @@
         mode: 0644
         content: |
           zox   ALL=NOPASSWD: ALL
+
+    - name: Copy kubeconfig (if any)
+      shell: |
+        if [ -f /root/.kube/config ] && \
+          install -Zb -m 700 -o zox -g users -d /home/zox/.kube
+          install -Zb -m 600 -o zox -g users -D /root/.kube/config /home/zox/.kube/config
+        fi
+      args:
+        creates: /home/zox/.kube/config
