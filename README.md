@@ -46,7 +46,7 @@ vagrant up
 make test
 ```
 
-> ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) **WARNING**</span>:<br/> Make sure none of the nodes are routing via `eth0` VirtualBox NAT interface.
+> ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) **WARNING**</span>:<br/> Make sure none of the nodes are routing via `eth0` vagrant NAT interface.
 
 4) Edit auto-generated `.hosts` file to modify which container-runtime to deploy, i.e.:
 
@@ -66,7 +66,7 @@ make install
 ## Known limitations
 
 * no HA; cluster will set up with only 1 Kubernetes master-node
-* VM images must use `eth#` network-interfaces notation
+* VM images **must** use `eth#` network-interfaces notation
 
 ## More information
 
