@@ -73,7 +73,7 @@
 
     - name: Copy kubeconfig (if any)
       shell: |
-        if [ -f /root/.kube/config ] && [ ! -f /zox/.kube/config ]; then
+        if [ -f /root/.kube/config ] && [ ! -f /home/zox/.kube/config ]; then
           install -Zb -m 700 -o zox -g users -d /home/zox/.kube
           install -Zb -m 600 -o zox -g users -D /root/.kube/config /home/zox/.kube/config
         fi
