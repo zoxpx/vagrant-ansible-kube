@@ -48,7 +48,7 @@ make test
 
 > ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) **WARNING**</span>:<br/> Make sure none of the nodes are routing via `eth0` vagrant NAT interface.
 
-4) Edit auto-generated `.hosts` file to modify which container-runtime to deploy, i.e.:
+4) [*OPTIONAL*] Edit auto-generated `.hosts` file to modify which container-runtime to use (the default is *docker*):
 
 ```
 foo1 	  # cri_runtime={docker|docker-ce|containerd|cri-o}
@@ -57,7 +57,16 @@ foo3 	  cri_runtime=containerd
 foo4 	  cri_runtime=cri-o
 ```
 
-5) Deploy the Kubernetes via Ansible
+5) [*OPTIONAL*] Edit [vars/common.yaml](vars/common.yaml) and update software versions if required:
+
+```yaml
+k8s_version: 1.17.11
+k8s_net: "https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml"
+crio_version: 1.17
+etcd_version: 3.4.13
+```
+
+6) Deploy the Kubernetes via Ansible
 
 ```bash
 make install
@@ -67,6 +76,7 @@ make install
 
 * no HA; cluster will set up with only 1 Kubernetes master-node
 * VM images **must** use `eth#` network-interfaces notation
+* the container-runtime packages may not be available for all the platforms/distributions  (e.g. `cri-o` packages as provided by [openSUSE](https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/), or `docker` on CentOS/RHEL 8)
 
 ## More information
 
