@@ -13,6 +13,8 @@
       - software-properties-common
       - linux-headers-{{ ansible_kernel }}
     state: latest
+    autoclean: true
+    update_cache: true
   when: ansible_os_family == 'Debian'
 
 - name: "Install basic packages (Ubuntu 16)"
