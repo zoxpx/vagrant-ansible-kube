@@ -11,7 +11,7 @@ vm_nodes = {
    'foo2' => 'generic/ubuntu1604',
    'foo3' => 'generic/ubuntu2004',
    'foo4' => 'centos/7',
-   'foo5' => 'centos/8',
+   'foo5' => 'centos/7',
 }
 
 rootPassword = 'Password1'                   # set to enable root ssh-access
