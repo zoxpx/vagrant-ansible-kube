@@ -51,6 +51,7 @@
         uid: 501
         group: users
         groups:
+          - root
           - bin
           - systemd-journal
         state: present
