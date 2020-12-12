@@ -55,6 +55,8 @@ Vagrant.configure("2") do |config|
                   echo 'GATEWAYDEV=eth1' >> /etc/sysconfig/network
                   systemctl restart network || \
                   ( systemctl restart NetworkManager; sleep 3; nmcli networking off; nmcli networking on; sleep 5 )
+                  # fix DNS entries on eth1
+                  nmcli con mod "System eth1" ipv4.dns "1.1.1.1 1.0.0.1" ; nmcli con mod "System eth1" ipv4.ignore-auto-dns yes ; nmcli connection up id 'System eth1'
                elif [ -f /etc/netplan/01-netcfg.yaml ]; then
                   echo ':: Fixing NetPlan  (Ubuntu 18/20 routing fix) ...'
                   sed -i -e 's/^\\( \\+\\)dhcp4: true/\\0\\n\\1dhcp4-overrides:\\n\\1  use-routes: false/' \
