@@ -1,12 +1,12 @@
 ---
-k8s_version: 1.17.11
+k8s_version: 1.19.3
 # k8s_master_ip: 70.0.51.17   # set to link with external master
 k8s_token: 030ffd.5d7a97b7e0d23ba9
 # k8s_net: "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
 k8s_net: "https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml"
-crio_version: 1.17
+crio_version: 1.19
 etcd_version: 3.4.13
-# cri_runtime: {docker|docker-ce|containerd|cri-o}
+# cri_runtime: {docker|docker-ce|containerd|cri-o}	# CRI default for all nodes
 pwx_ca: |
   -----BEGIN CERTIFICATE-----
   MIID9zCCAt+gAwIBAgIFDpSL+nMwDQYJKoZIhvcNAQEFBQAwgZIxCzAJBgNVBAYT
