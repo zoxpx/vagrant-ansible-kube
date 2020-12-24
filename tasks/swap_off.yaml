@@ -4,4 +4,5 @@
     if [ `wc -l < /proc/swaps` -gt 1 ]; then
       grep -v '^#' /etc/fstab | awk '/swap/{print $1}' | xargs -rn1 swapoff
       sed -i -e 's/.*swap.*/# \0  # ANSIBLE/' /etc/fstab
+      [ -f /swapfile ] && rm -f /swapfile
     fi
