@@ -7,7 +7,7 @@
   strategy: free
 
   tasks:
-    - name: PreInstall packages  (CentOS)
+    - name: Install packages (CentOS)
       package:
         name:
           - epel-release
@@ -23,6 +23,7 @@
           - zsh
           - vim
           - curl
+          - rsync
           - git
           - rsync
           - psmisc
@@ -30,11 +31,11 @@
           - jq
         state: present
 
-    - name: Stop services
+    - name: Stop services (if installed)
       systemd:
         name: '{{ item }}'
         state: stopped
-        enabled: yes
+        enabled: no
       with_items:
         - snapd
         - atd
@@ -65,7 +66,7 @@
           - '-zPp'
         creates: /home/zox/.vim/colors/zox.vim
 
-    - name: Create sudo for zox
+    - name: Create sudoers for zox
       copy:
         dest: /etc/sudoers.d/003-zox
         mode: 0644

@@ -1,5 +1,5 @@
 ---
-# The following standalone playbook DESTROYS your Kubernetes cluster  (but leaves nodes running)
+# The following standalone playbook DESTROYS your Kubernetes cluster (but leaves nodes running)
 
 - hosts: all
   remote_user: vagrant
@@ -22,7 +22,7 @@
       systemd:
         name: '{{ item }}'
         state: stopped
-        enabled: yes
+        enabled: no
       with_items:
         - kubelet
         - docker
