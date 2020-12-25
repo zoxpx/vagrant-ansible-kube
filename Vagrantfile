@@ -28,7 +28,7 @@ Vagrant.configure("2") do |config|
          node.vm.network :public_network, :type => "bridge", dev: "br0", mode: "bridge",
             network_name: "public_network", use_dhcp_assigned_default_route: true
 
-         # libvirt-specific host-tuning
+         # libvirt-specific VM-tuning
          node.vm.provider :libvirt do |v|
             v.memory = 4096
             v.cpus = 2

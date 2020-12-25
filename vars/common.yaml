@@ -6,7 +6,7 @@ k8s_token: 030ffd.5d7a97b7e0d23ba9
 k8s_net: "https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml"
 crio_version: 1.19
 etcd_version: 3.4.13
-# cri_runtime: {docker|docker-ce|containerd|cri-o}	# CRI default for all nodes
+# cri_runtime: {docker|docker-ce|containerd|cri-o}	# set Container Runtime for all nodes (or use ../.hosts to customize individual nodes)
 pwx_ca: |
   -----BEGIN CERTIFICATE-----
   MIID9zCCAt+gAwIBAgIFDpSL+nMwDQYJKoZIhvcNAQEFBQAwgZIxCzAJBgNVBAYT

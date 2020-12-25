@@ -6,7 +6,7 @@
     shell: /bin/false
     state: present
 
-- name: Make etcd dirs (1)
+- name: Make etcd base dirs
   file:
     path: "{{ item }}"
     state: directory
@@ -16,7 +16,7 @@
     - /opt/etcd
     - /opt/etcd/bin
 
-- name: Make etcd dirs (2)
+- name: Make etcd data dirs
   file:
     path: "{{ item }}"
     state: directory
