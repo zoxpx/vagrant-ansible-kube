@@ -146,7 +146,6 @@ So, you have an option: either test the application multiple times on multiple K
       ```bash
       vagrant ssh foo2
       sudo -u root HOME=/root bash -l
-      HOME=/root
       ```
 
    2. log in via `virsh`:
