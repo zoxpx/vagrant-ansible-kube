@@ -5,7 +5,7 @@
   become_method: sudo
   become_user: root
   strategy: free
-  gather_facts: no
+  gather_facts: false
 
   tasks:
     - name: Install Salt client
