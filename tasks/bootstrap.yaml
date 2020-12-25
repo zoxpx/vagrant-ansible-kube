@@ -1,13 +1,15 @@
 ---
 - name: "Install basic packages (Ubuntu)"
-  apt:
+  package:
     name:
       - unzip
       - tar
       - curl
-      - libseccomp2
       - socat
       - util-linux
+      - jq
+      - bind9-host
+      - libseccomp2
       - apt-transport-https
       - ca-certificates
       - software-properties-common
@@ -18,7 +20,7 @@
   when: ansible_os_family == 'Debian'
 
 - name: "Install basic packages (Ubuntu 16)"
-  apt:
+  package:
     name:
       - btrfs-tools
       - ntp
@@ -29,7 +31,7 @@
   when: ansible_os_family == 'Debian' and ansible_distribution_major_version|int <= 18
 
 - name: "Install basic packages (Ubuntu 18+)"
-  apt:
+  package:
     name:
       - btrfs-progs
       - systemd-timesyncd
@@ -41,27 +43,37 @@
 
 # ---------------------------------------------
 
+- name: "PreInstall EPEL package (CentOS)"
+  package:
+    name:
+      - epel-release
+    state: latest
+    update_cache: yes
+  when: ansible_os_family == 'RedHat'
+
 - name: "Install basic packages (CentOS)"
-  yum:
+  package:
     name:
       - unzip
       - tar
       - curl
-      - libseccomp
       - socat
       - util-linux
-      - epel-release
+      - jq
+      - bind-utils
+      - libseccomp
       - e2fsprogs
       - yum-utils
       - yum-plugin-versionlock
       - ca-certificates
       - device-mapper-persistent-data
       - lvm2
+      - kernel-devel
     state: latest
   when: ansible_os_family == 'RedHat'
 
 - name: "Install basic packages (CentOS7)"
-  yum:
+  package:
     name:
       - btrfs-progs
       - policycoreutils-python
@@ -72,7 +84,7 @@
   when: ansible_os_family == 'RedHat' and ansible_distribution_major_version|int <= 7
 
 - name: "Install basic packages (CentOS8)"
-  yum:
+  package:
     name:
       - python3
       - policycoreutils-python-utils
