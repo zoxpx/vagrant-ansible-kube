@@ -1,3 +1,7 @@
 ---
 - name: Install Portworx (https://portworx.com)
-  command: kubectl apply -f 'https://install.portworx.com?mc=false&kbver={{ k8s_version }}&k=etcd%3Ahttp%3A%2F%2F{{ k8s_master_ip }}%3A2379&m=eth1&d=eth1&c=px-cluster-123&stork=true&st=k8s'
+  shell: |
+    PODs=$(kubectl get pods -A -l 'name in (portworx,portworx-operator)' | wc -l)
+    if [ $PODs -eq 0 ]; then
+      kubectl apply -f 'https://install.portworx.com?mc=false&kbver={{ k8s_version }}&k=etcd%3Ahttp%3A%2F%2F{{ k8s_master_ip }}%3A2379&m=eth1&d=eth1&c=px-cluster-ansible-123&stork=true&st=k8s'
+    fi
