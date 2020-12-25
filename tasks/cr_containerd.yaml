@@ -1,8 +1,4 @@
 ---
-- debug:
-    msg:
-      - "Installing {{ cri_runtime }} on {{ inventory_hostname }} with uuid {{ ansible_product_uuid }}"
-
 - name: Add Docker gpg key (Ubuntu)
   apt_key:
     url: https://download.docker.com/linux/ubuntu/gpg
