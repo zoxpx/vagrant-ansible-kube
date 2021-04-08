@@ -41,7 +41,7 @@
 - name: Copy kube config, install kube network
   shell: |
     install -m 700 -d '{{ ansible_env.HOME }}/.kube'                                && \
-    install -m 644 /etc/kubernetes/admin.conf '{{ ansible_env.HOME }}/.kube/config' && \
+    install -m 600 /etc/kubernetes/admin.conf '{{ ansible_env.HOME }}/.kube/config' && \
     kubectl apply -n kube-system -f '{{ k8s_net }}'
 
 # # note: kubectl will error out if nodes are not even registered; will sleep a bit till parallel `kubectl join`s catch
