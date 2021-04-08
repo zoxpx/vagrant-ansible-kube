@@ -56,7 +56,7 @@
           --advertise-client-urls http://localhost:2379,http://{{ k8s_master_ip }}:2379 \
           --listen-client-urls http://0.0.0.0:2379 \
           --data-dir /opt/etcd/data \
-          --auto-compaction-mode=revision --auto-compaction-retention=1000
+          --auto-compaction-retention=1000
       Restart=on-abnormal
       RestartSec=10s
       LimitNOFILE=40000
