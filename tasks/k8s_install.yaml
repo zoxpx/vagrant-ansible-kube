@@ -7,7 +7,7 @@
 
 - name: Add kubernetes repository (Ubuntu)
   apt_repository:
-#   repo: "deb http://apt.kubernetes.io/ kubernetes-{{ ansible_distribution_release }} main"
+# have https://apt.kubernetes.io/dists/kubernetes-{jessie,lucid,precise,squeeze,stretch,trusty,wheezy,xenial,yakkety}
     repo: "deb http://apt.kubernetes.io/ kubernetes-xenial main"
     state: present
     filename: "kubernetes"
@@ -50,22 +50,28 @@
 
 # ---------------------------------------------
 
-- name: Load br_netfilter kernel module
+- name: Load kernel modules
   modprobe:
-    name: br_netfilter
+    name: "{{ item }}"
     state: present
+  with_items:
+    - overlay
+    - br_netfilter
 
-- name: Set bridge-nf-call-iptables
-  sysctl:
-    name: net.bridge.bridge-nf-call-iptables
-    value: "1"
+- name: Persist kernel modules
+  copy:
+    mode: "0644"
+    dest: /etc/modules-load.d/ansible.conf
+    content: |
+      overlay
+      br_netfilter
 
-- name: Set bridge-nf-call-ip6tables
+- name: Set sysctl
   sysctl:
-    name: net.bridge.bridge-nf-call-ip6tables
+    name: "{{ item }}"
     value: "1"
-
-- name: Set ip_forward
-  sysctl:
-    name: net.ipv4.ip_forward
-    value: "1"
+    sysctl_set: yes
+  with_items:
+    - net.bridge.bridge-nf-call-iptables
+    - net.bridge.bridge-nf-call-ip6tables
+    - net.ipv4.ip_forward
