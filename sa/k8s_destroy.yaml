@@ -7,7 +7,7 @@
   become_method: sudo
   become_user: root
   strategy: free
-  gather_facts: false
+  gather_facts: true
   vars_files:
     - ../vars/common.yaml
 
@@ -57,8 +57,21 @@
         iptables -X
       ignore_errors: true
 
-    - name: Remove pods and CNI
+    - name: Remove pods protections
       shell: |
         find /var/lib/kubelet/pods/ -type d -print0 | xargs -r0 chattr -i
-        rm -rf /var/lib/kubelet/* /var/lib/cni/ /etc/cni/ /opt/etcd/data/
+      ignore_errors: true
+
+    - name: Delete content
+      file:
+        path: '{{ item }}'
+        state: absent
+      with_items:
+        - /var/lib/kubelet/
+        - /var/lib/cni/
+        - /etc/cni/
+        - /opt/etcd/data/
+        - /etc/containerd/config-ansible.toml
+        - /etc/crictl.yaml
+        - /etc/kubernetes/ansible.yaml
       ignore_errors: true
