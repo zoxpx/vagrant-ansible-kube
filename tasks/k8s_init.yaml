@@ -1,14 +1,15 @@
 ---
 - name: Install EtcD
   include: etcd_install.yaml
+  when: etcd_version is defined
 
 - name: Create kubeadm config
   copy:
     mode: "0644"
     dest: /etc/kubernetes/ansible.yaml
     content: |
-      apiVersion: kubeadm.k8s.io/v1beta2
       kind: InitConfiguration
+      apiVersion: kubeadm.k8s.io/v1beta2
       bootstrapTokens:
       - groups:
         - system:bootstrappers:kubeadm:default-node-token
@@ -21,8 +22,8 @@
         advertiseAddress: {{ k8s_master_ip }}
         bindPort: 6443
       ---
-      apiVersion: kubeadm.k8s.io/v1beta2
       kind: ClusterConfiguration
+      apiVersion: kubeadm.k8s.io/v1beta2
       etcd:
         external:
           endpoints:
@@ -32,6 +33,10 @@
         dnsDomain: cluster.local
         serviceSubnet: 10.96.0.0/12
         podSubnet: 10.244.0.0/16
+      ---
+      kind: KubeletConfiguration
+      apiVersion: kubelet.config.k8s.io/v1beta1
+      cgroupDriver: {{ k8s_cgroup }}
 
 - name: Run kubeadm init
   command: kubeadm init --config /etc/kubernetes/ansible.yaml --cri-socket={{ cri_sock }}

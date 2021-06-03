@@ -11,6 +11,24 @@
     dnf install -y docker-ce --nobest
   when: cri_runtime == 'docker-ce'
 
+- name: Make /etc/docker dir
+  file:
+    path: '/etc/docker'
+    state: directory
+  when: cri_runtime == 'docker' or cri_runtime == 'docker-ce'
+
+- name: Make /etc/docker/daemon.json file
+  copy:
+    owner: root
+    group: root
+    mode: '0644'
+    dest: '/etc/docker/daemon.json'
+    content: |
+      {
+        "exec-opts": ["native.cgroupdriver={{ k8s_cgroup }}"]
+      }
+  when: cri_runtime == 'docker' or cri_runtime == 'docker-ce'
+
 - name: Enable docker
   systemd:
     name: docker

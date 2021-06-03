@@ -68,8 +68,8 @@
   lineinfile:
     path: /etc/crio/crio.conf
     state: present
-    regexp: '^cgroup_manager\s*=.*cgroupfs.*'
-    line: 'cgroup_manager = "systemd"'
+    regexp: '^cgroup_manager\s*=.*'
+    line: 'cgroup_manager = "{{ k8s_cgroup }}"'
   when: cri_runtime == 'cri-o'
 
 - name: Enable CRI-O

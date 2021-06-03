@@ -3,18 +3,6 @@
   file:
     path: "{{ kubelet_dir }}"
     state: directory
-    mode: "0755"
-    owner: root
-    group: root
-  when: kubelet_dir is defined
-
-- name: Update kubelet root-dir (CentOS)
-  lineinfile:
-    path: "{{ kubelet_vars }}"
-    state: present
-    create: yes
-    regexp: "^KUBELET_EXTRA_ARGS="
-    line: "KUBELET_EXTRA_ARGS=--root-dir={{ kubelet_dir }}"
   when: kubelet_dir is defined
 
 # ---------------------------------------------
@@ -24,8 +12,8 @@
     path: "{{ kubelet_vars }}"
     state: present
     create: yes
-    regexp: "^KUBELET_EXTRA_ARGS="
-    line: "KUBELET_EXTRA_ARGS=--runtime-cgroups=/system.slice/containerd.service --runtime-request-timeout=15m --container-runtime=remote --container-runtime-endpoint=unix:///run/containerd/containerd.sock"
+    regexp: '^KUBELET_EXTRA_ARGS='
+    line: 'KUBELET_EXTRA_ARGS=--runtime-cgroups=/system.slice/containerd.service --container-runtime=remote --container-runtime-endpoint=unix:///run/containerd/containerd.sock'
   when: cri_runtime == 'containerd'
 
 # ---------------------------------------------
@@ -35,9 +23,32 @@
     path: "{{ kubelet_vars }}"
     state: present
     create: yes
-    regexp: "^KUBELET_EXTRA_ARGS="
-    line: 'KUBELET_EXTRA_ARGS=--feature-gates="AllAlpha=false,RunAsGroup=true" --cgroup-driver=systemd --runtime-request-timeout=5m --container-runtime=remote --container-runtime-endpoint=unix:///var/run/crio/crio.sock'
+    regexp: '^KUBELET_EXTRA_ARGS='
+    line: 'KUBELET_EXTRA_ARGS=--feature-gates="AllAlpha=false,RunAsGroup=true" --container-runtime=remote --container-runtime-endpoint=unix:///var/run/crio/crio.sock'
   when: cri_runtime == 'cri-o'
+
+# ---------------------------------------------
+
+- name: Change default kubelet root-dir  (if required)
+  lineinfile:
+    path: "{{ kubelet_vars }}"
+    state: present
+    create: yes
+    regexp: '^KUBELET_EXTRA_ARGS=(.*)'
+    line: 'KUBELET_EXTRA_ARGS=--root-dir={{ kubelet_dir }} \1'
+    backrefs: yes
+  when: kubelet_dir is defined
+
+- name: Change kubelet cgroups  (if required)
+  lineinfile:
+    path: "{{ kubelet_vars }}"
+    state: present
+    create: yes
+    regexp: '^KUBELET_EXTRA_ARGS=(.*)'
+    line: 'KUBELET_EXTRA_ARGS=--cgroup-driver={{ k8s_cgroup }} --cgroup-root=/ \1'
+    backrefs: yes
+  when: k8s_cgroup == 'systemd'
+
 
 - name: Enable kubelet
   systemd:

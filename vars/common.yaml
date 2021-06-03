@@ -1,12 +1,15 @@
 ---
 # see https://dl.k8s.io/release/stable.txt
-k8s_version: 1.20.5
+k8s_version: 1.21.1
 # k8s_master_ip: 70.0.51.17   # set to link with external master
 k8s_token: 030ffd.5d7a97b7e0d23ba9
 # k8s_net: "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
 k8s_net: "https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml"
-crio_version: "1.20"
-etcd_version: 3.2.32
+# k8s_cgroup: {systemd|cgroupfs}
+k8s_cgroup: systemd
+crio_version: "1.21"
+# see https://github.com/etcd-io/etcd/releases/latest
+etcd_version: 3.4.16
 # cri_runtime: {docker|docker-ce|containerd|cri-o}	# set Container Runtime for all nodes (or use ../.hosts to customize individual nodes)
 pwx_ca: |
   -----BEGIN CERTIFICATE-----

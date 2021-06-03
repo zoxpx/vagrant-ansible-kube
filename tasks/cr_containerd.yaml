@@ -37,11 +37,11 @@
 
 - name: Make Containerd directory
   file:
-    path: "/etc/containerd"
+    path: '/etc/containerd'
     state: directory
   when: cri_runtime == 'containerd'
 
-- name: Dump default Containerd config
+- name: Dump default Containerd config  (if missing)
   shell: containerd config default > /etc/containerd/config.toml
   args:
     chdir: /etc/containerd
@@ -55,6 +55,30 @@
     line: '# disabled_plugins=\1'
     backrefs: yes
   when: cri_runtime == 'containerd'
+
+- name: Configure Containerd's cgroup-driver
+  copy:
+    owner: root
+    group: root
+    mode: '0644'
+    dest: '/etc/containerd/config-ansible.toml'
+    content: |
+      version = 2
+
+      [plugins]
+
+        [plugins."io.containerd.grpc.v1.cri"]
+
+          [plugins."io.containerd.grpc.v1.cri".containerd]
+
+            [plugins."io.containerd.grpc.v1.cri".containerd.runtimes]
+
+              [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+                runtime_type = "io.containerd.runc.v2"
+
+                [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+                  SystemdCgroup = true
+  when: cri_runtime == 'containerd' and k8s_cgroup == 'systemd'
 
 - name: Restart Containerd
   # systemd: name=containerd daemon_reload=yes state=started enabled=yes
@@ -70,7 +94,7 @@
     owner: root
     group: root
     mode: "0644"
-    dest: "/etc/crictl.yaml"
+    dest: '/etc/crictl.yaml'
     content: |
       runtime-endpoint: unix://{{ cri_sock }}
       image-endpoint: unix://{{ cri_sock }}
