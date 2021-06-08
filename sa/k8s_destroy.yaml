@@ -71,6 +71,7 @@
         - /var/lib/cni/
         - /etc/cni/
         - /opt/etcd/data/
+        - /var/run/docker.sock
         - /etc/containerd/config-ansible.toml
         - /etc/crictl.yaml
         - /etc/kubernetes/ansible.yaml
