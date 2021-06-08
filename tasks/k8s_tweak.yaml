@@ -49,7 +49,6 @@
     backrefs: yes
   when: k8s_cgroup == 'systemd'
 
-
 - name: Enable kubelet
   systemd:
     name: kubelet
